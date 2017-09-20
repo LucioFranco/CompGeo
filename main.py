@@ -4,33 +4,42 @@ class Polygon:
         self.x = x
         self.y = y
 
-def isClockwise(p):
-    # do something here
-    print p.n
-    print p.x
-    print p.y
+def isClockwise(poly):
+    sum = 0
+    for i in range(0, poly.n - 2):
+        p = (poly.x[i], poly.y[i])
+        q = (poly.x[i+1], poly.y[i+1])
+        r = (poly.x[i+2], poly.y[i+2])
+        sum += turn(p, q, r)
+
+    if(sum < 0): return True
+    else: return False
+        
 
 
 def cross(v1,v2):
     return (v1[0] * v2[1]) - (v2[0] * v1[1])
-def turn(p1,p2,p3):
-    return cross(
+def turn(p, q, r):
+    v1 = (q[0] - p[0], q[1] - p[1])
+    v2 = (r[0] - p[0], r[1] - p[1])
+    c = cross(v1, v2)
+    if(c > 0): return 1
+    elif(c < 0): return -1
+    else: return 0
 
 
-A = (-2.96, 3.07)
-B = (-0.66, 5.3)
-C = (3.31, 3.05)
-D = (1.62, -0.16)
-E = (4.18, -3.22)
-F = (-1.65, -3.34)
-G = (-5.09, -1.22)
-H = (-1.01, 1.27)
+A = (-2,4)
+B = (-2,0)
+C = (0,-2)
+D = (2,0)
+E = (0,2)
+F = (2,4)
+G = (0,6)
 
-n = 8
-x1 = [A[0],B[0],C[0],D[0],E[0],F[0],G[0],H[0]]
-y1 = [A[1],B[1],C[1],D[1],E[1],F[1],G[1],H[1]]
+n = 7
+x1 = [A[0],B[0],C[0],D[0],E[0],F[0],G[0]]
+y1 = [A[1],B[1],C[1],D[1],E[1],F[1],G[1]]
 
 p = Polygon(n, x1, y1)
 
-#isClockwise(p)
-print cross((1.17-3.07,3.84-1.24),(-1.34-3.07,0.32-1.24))
+print isClockwise(p)
