@@ -5,19 +5,22 @@
 
 # 1.
 ## a.
-``` python
-CODE (var):
-     my code block
-	 line 3 in block
-```
 
-Find the area under the line curve...
-
-This is tex $math$. $O(n^2)$
-
-!!!
-**Finish**
-!!!
+```Python
+def isClockwise(poly):
+    sum = 0
+    for i in range(0, poly.n):
+        p = (poly.x[i], poly.y[i])
+		# Account for wrap-around
+        next = (i + 1) % poly.n 
+        q = (poly.x[next], poly.y[next])
+        if cross(p, q) > 0: sum += 1
+        elif cross(p, q) < 0: sum -=1
+    
+	# Clockwise is negative
+    return sum <= 0
+```	
+The algorithm takes the cross product of every edge.
 
 ## b.
 
@@ -33,7 +36,7 @@ The ear lemma in class states that *Every polygon $P$ with $n>3$ vertices has at
 Using this we can say that the added vertex must fall within an ear, and that there exists a point within the ear that has only one diagonal.
 
 !!!
-**Ask about collinear edges**
+**Polygons do not contain collinear edges**`
 !!!
 
 # 3.

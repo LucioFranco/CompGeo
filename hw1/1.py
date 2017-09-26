@@ -14,13 +14,15 @@ def cross(v1,v2):
     return (v1[0] * v2[1]) - (v2[0] * v1[1])
 
 # Primary algorithm for problem 1a.
+#   Takes a Polygon object as input.
 #   Sums cross products of each two neighboring
-#   edges and checks polarity
+#     edges and checks polarity.
 def isClockwise(poly):
     sum = 0
     for i in range(0, poly.n):
         p = (poly.x[i], poly.y[i])
-        next = (i + 1) % poly.n ## To account for wrap-around
+        # Account for wrap-around
+        next = (i + 1) % poly.n 
         q = (poly.x[next], poly.y[next])
         if cross(p, q) > 0: sum += 1
         elif cross(p, q) < 0: sum -=1
