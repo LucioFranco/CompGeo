@@ -40,7 +40,7 @@ def isClockwise(poly):
         q = (poly.x[i+1], poly.y[i+1])
         sum += cross(p, q)
 
-    if(sum < 0): return True
+    if(sum > 0): return True
     else: return False
 
 # Primary algorithm for problem 1b.
