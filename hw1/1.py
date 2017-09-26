@@ -26,7 +26,7 @@ def isClockwise(poly):
         elif cross(p, q) < 0: sum -=1
 
     # Clockwise is negative
-    return  sum <= 0
+    return sum <= 0
 
 # Primary algorithm for problem 1b.
 def hasIntersectingSegments(poly):
@@ -37,7 +37,7 @@ def hasIntersectingSegments(poly):
 
 # Clockwise (True)
 poly1 = Polygon([(0,0), (0,1), (1,0)])
-assert  isClockwise(poly1) == True
+assert isClockwise(poly1) == True
 
 poly2 = Polygon([(0,2), (2,3), (3,2), (2,1), (1,2)])
 assert isClockwise(poly2) == True
