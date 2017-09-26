@@ -99,3 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Markdown
+.1.md.native.pandoc
+.DS_Store
