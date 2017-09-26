@@ -1,6 +1,3 @@
-
-
-
 # HW 1 Probelm 1
 # Sam Windham
 #
@@ -23,15 +20,17 @@ class Polygon:
 #   and primitive turn algorithm
 def cross(v1,v2):
     return (v1[0] * v2[1]) - (v2[0] * v1[1])
+
 def turn(p, q, r):
     v1 = (q[0] - p[0], q[1] - p[1])
     v2 = (r[0] - p[0], r[1] - p[1])
     c = cross(v1, v2)
+
     if(c > 0): return 1
     elif(c < 0): return -1
     else: return 0
 
-# Primary algorithm for problem 1.
+# Primary algorithm for problem 1a.
 #   Checks is each angle is a left
 #   or right turn and sums the results.
 def isClockwise(poly):
@@ -39,12 +38,14 @@ def isClockwise(poly):
     for i in range(0, poly.n - 2):
         p = (poly.x[i], poly.y[i])
         q = (poly.x[i+1], poly.y[i+1])
-        r = (poly.x[i+2], poly.y[i+2])
-        sum += turn(p, q, r)
+        sum += cross(p, q)
 
     if(sum < 0): return True
     else: return False
-        
+
+# Primary algorithm for problem 1b.
+def hasIntersectingSegments(poly):
+    return True
 
 
 # Sample data
