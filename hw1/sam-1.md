@@ -13,17 +13,33 @@ CODE (var):
 
 Find the area under the line curve...
 
-This is tex $math$. O($n^2$)
+This is tex $math$. $O(n^2)$
+
+!!!
+**Finish**
+!!!
 
 ## b.
-text.
+
 
 # 2.
 ## a.
-text.
+Proof by induction. 
+
+A triangle or polygon of size $n=3$ has a unique triangulation. Adding a vertex to this polygon will create a quadrilateral. Placing the vertex outside of the polygon results in a convex quadrilateral. And since a convex quadrilateral can never have unique triangulation, it  must be placed within the polygon.
+
+The ear lemma in class states that *Every polygon $P$ with $n>3$ vertices has at least two ears.*
+
+Using this we can say that the added vertex must fall within an ear, and that there exists a point within the ear that has only one diagonal.
+
+!!!
+**Ask about collinear edges**
+!!!
 
 # 3.
-text.
+!!!
+**Lucio**
+!!!
 
 # 4.
 ## a.
@@ -36,23 +52,35 @@ $$(x_i,y_i) \times (x_{i-1},y_{i-1}) = (x_i y_{i-1} - x_{i-1} y_i)$$
 It then sums each of these cross-products and scales by $1/2$.
 This leaves us with the area within the polygon. The orientation of the points correctly add and subtract the areas.
 
-For a triangle ($p_1$, $p_2$, $p_3$), let $v_1$ be the vector from the origin to $p_1$, $v_2$ be the vector from origin to $p_2$, and $v_3$ be the vector from origin to $p_3$.
+For a triangle ($p_1$, $p_2$, $p_3$), let $v_1$ be the vector from the origin to $p_1$, $v_2$ be the vector from the origin to $p_2$, and $v_3$ be the vector from the origin to $p_3$.
 
+!!!
+**Finish**
+!!!
 
 ## b.
-text.
+!!!
+**Together**
+!!!
 
 # 5.
 ## a.
-text
+!!!
+**Together**
+!!!
 
 ## b.
-text.
+!!!
+**Together**
+!!!
 
 ## c.
-text.
+!!!
+**Together**
+!!!
 
 ## d.
-text.
-
+!!!
+**Together**
+!!!
 
