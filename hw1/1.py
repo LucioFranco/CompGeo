@@ -28,6 +28,7 @@ def isClockwise(poly):
         elif cross(p, q) < 0: sum -=1
 
     # Clockwise is negative
+    print sum
     return sum <= 0
 
 # Primary algorithm for problem 1b.
