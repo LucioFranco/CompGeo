@@ -1,7 +1,6 @@
 ---
 title: Homework 1
 author: Sam Windham, *with Lucio Franco*
-date: 9/28/2017
 geometry: margin=1in
 ---
 
@@ -13,21 +12,34 @@ def isClockwise(poly):
     sum = 0
     for i in range(0, poly.n):
         p = (poly.x[i], poly.y[i])
-		# Account for wrap-around
         next = (i + 1) % poly.n 
         q = (poly.x[next], poly.y[next])
         if cross(p, q) > 0: sum += 1
         elif cross(p, q) < 0: sum -=1
-    
-	# Clockwise is negative
     return sum <= 0
 ```	
 The algorithm takes the cross product of every edge and checks the polarity of the result. It sums all these polarities and if it is $< 0$ it is clockwise.
 
-The algorithm only iterates through all points once, and calculating cross product is done ain constant time. Therefore the runtime $= O(n)$.
+The algorithm only iterates through all points once, and calculating cross product is done in constant time. Therefore the runtime $= O(n)$.
 
 ## b.
+```Python
+def isSimple(poly):
+    prev_x_prod = cross((poly.x[0], poly.y[0]), (poly.x[1], poly.y[1]))
+    max_change = 1
+    for i in range(1, poly.n):
+        p = (poly.x[i], poly.y[i])
+        next = (i + 1) % poly.n 
+        q = (poly.x[next], poly.y[next])
+        current_cross = cross(p,q)
+        if (prev_x_prod * current_cross) < 0:
+            max_change -= 1
+        prev_x_prod = current_cross
+    return max_change >= 0
+```
+Similar to algorithm 1.a., this algorithm checks the polarity of cross products. Instead of keeping track of all previous polarities, it only cares about the last polarity. Since simple convex polygons contain only one polarity change when iterating through the points successively, a convex polygon with more than one polarity change is complex.
 
+The algorithm only iterates through all points once, and calculating cross product is done in constant time. Therefore the runtime $= O(n)$.
 
 \newpage
 
