@@ -1,6 +1,7 @@
 ---
 title: Homework 1
 author: Sam Windham, *with Lucio Franco*
+date: 9/28/17
 geometry: margin=1in
 ---
 
@@ -65,13 +66,23 @@ Using these regions, you can construct polygons of size $n > 3$. For example:
 
 For a polygon of this standard shape of size $n$, there exists valid regions outside its two ears. Since the lower $n-1$ vertices are strictly-convex, no diagonal exists between these points. Therefore each must have only a diagonal with the top vertex (the red vertex in the upper examples), and therefore there exists only one triangulation.
 
+More generally, the sum of interior angles is equal to $\pi (n-2)$. Reflex vertices are interior angles with an angle $>\pi$. Therefore there are at most $n-3$ reflex angles. Increasing the number of reflex vertices in a polygon will decrease the number of triangulations. If we maximize the number of reflex vertices ($n-3$), then there should be the least number of triangulations (one unique).
+
 \newpage
 
 # 3.
-!!!
-**Lucio**
-!!!
+The generalized 2D solution would also use a hashtable that bucketed on both $x$ and $y$ values
+The bucketing can be split using $r$, 
+e.g. $Bucket_x = \lfloor \frac{x}{r} \rfloor$, $Bucket_y = \lfloor \frac{y}{r} \rfloor$.
+We hash each point using "$x,y$" as the key.
 
+In the 1D solution, only the next bucket had to be checked. In 2D is needed to check neighboring buckets, but sufficient enough to check 4: right, bottom, bottom-left, bottom-right. Previous buckets will have already checked the upper-left buckets.
+
+So following the 1D solution, we add all points in the current bucket that is not our current point to the result. We then check 4 other buckets and test if each point is in range. If a point is in range, add it to the result.
+
+Since each point is hashed only once, the space complexity is $O(n)$. The runtime is the same as the 1D solution because instead of checking 1 extra bucket, we are checking 4, and that is a constant increase. Therefore, $T(n) = O(n + k)$.
+
+This solution can be adapted for $L_2$ by changing the range test to the eucldian distance. Every point within the current bucket will also have to be checked. This does not effect space or runtime. 
 
 # 4.
 ## a.
@@ -115,16 +126,13 @@ Iterate through the points in order of $P$ and add them to the corresponding arr
 Since the arrays together form a single copy of $P$, the space complexity is $O(n)$.
 Since $P$ is iterated though once the first time, and once more when finding areas of both sub-polygon, the algorithm runs in $O(n)$ time.
 
-**(b.)** When P is an arbitrary simple polygon, the above method will not work. Instead, iterate through all points and add 
+**(b.) [None.]**
 
 
 # 5.
 ## a.
 The sum of interior angles is equal to $\pi (n-2)$. Reflex vertices are interior angles with an angle $>\pi$. Therefore there are at most $n-3$ reflex angles. In this worst case, there is an angle that can contain a diagonal with each reflex vertex, therefore there can be $n-3$ indispensable diagonals incident on that vertex.
 
-## b.
-
-## c.
-
-## d.
+## b. - d.
+**[None.]**
 
