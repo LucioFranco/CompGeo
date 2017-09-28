@@ -28,6 +28,17 @@ def isClockwise(poly):
     # Clockwise is negative
     return sum <= 0
 
+def isSimple(poly):
+    prev_x_prod = cross(poly.x[0], poly.y[0])
+    max_change = 1
+    for i in range(1, poly.n):
+        current_cross = cross(poly.x[i], poly.y[i])
+        if (pre_x_prod * current_cross) < 0:
+            max_change -= 1
+
+    return max_change < 0
+
+
 # Primary algorithm for problem 1b.
 def hasIntersectingSegments(poly):
     return True
@@ -61,4 +72,3 @@ assert isClockwise(poly7) == True
 
 # Success!
 print "All Tests Passed!"
-
