@@ -119,14 +119,17 @@ Since this finds the area of a triangle and any polygon can be triangulated, the
 
 
 ## b.
-**(a.)** When $P$ is convex, two arrays can hold all points on the positive side of the chord and on the negative side of the chord. This can be calculated by finding 
+**(a.)** When $P$ is convex, two arrays can hold all points on the positive side of the chord and on the negative side of the chord. This can be found using turns:
 $(C_1,C_2) \times (C_1, P_i) \forall P_i \in P$.
-Iterate through the points in order of $P$ and add them to the corresponding array given the cross product result. Insert $C_1$ to both arrays on the first polarity change, and $C_2$ on the second. Then use the 4.a. formula to calculate the area of each sub-polygon in both arrays.
+
+Iterate through the points in order of $P$ and add them to the corresponding arrays given the turn with the chord. Insert $C_1$ to both arrays on the first polarity change, and $C_2$ on the second. Then use the 4.a. formula to calculate the area of each sub-polygon in both arrays.
 
 Since the arrays together form a single copy of $P$, the space complexity is $O(n)$.
 Since $P$ is iterated though once the first time, and once more when finding areas of both sub-polygon, the algorithm runs in $O(n)$ time.
 
-**(b.) [None.]**
+**(b.)** Starting with any point $P_i$, check if either point in the chord lies on the line between $P_i$ and $P_{i+1}$. This is a simple check that can be done in constant time. If it fails, add $P_i$ to the first array and continue with $P_{i+1}$. If it succeeds, add both $P_{i}$ and the chord point to the array. Then add the chord point and $P_{i+1}$ to the second linked list. Continue around the polygon and add to the other list. Once the second chord point is found, do the same as before. 
+
+This will correctly close the two sub-polygons in linear time. Then calculate the area of each sub-polygon. The space required is, once again, $O(n)$, and the time is linear, $O(n)$.
 
 
 # 5.
