@@ -32,21 +32,24 @@ The algorithm takes the cross product of every edge.
 # 2.
 ## a.
 
-A triangle or polygon of size $n=3$ has a unique triangulation. Adding a vertex to this polygon will create a quadrilateral. This vertex can be placed anywhere inside the triangle and produce a unique triangulation, but this is not the case for polygons of size $n > 3$ with unique triangulation. If we look outside the triangle we find areas that gaurentee a quadrilateral with unique triangulation.
+A triangle or polygon of size $n = 3$ has a unique triangulation. Adding a vertex to this polygon will create a quadrilateral. This vertex can be placed anywhere inside the triangle and produce a unique triangulation, but this is not the case for polygons of size $n > 3$ with unique triangulation. 
 
-![Regions marked with green angles are valid.](img/img1.png){ width=100 }
+If we look outside the triangle we find areas that guarantee a quadrilateral with unique triangulation. A vertex placed inside these regions will not prodvuce a diagonal in the new quadrilateral.
 
-A vertex placed inside these regions will not produce a diagonal in the new quadrilateral.
+![Regions marked with green angles are valid.](img/img1.png){ height=100 }
 
-![New vertex D connecting to A.](img/img2.png){ width=160 }
-
-![New vertex D connecting to B.](img/img3.png){ width=160 }
+![New vertex D connecting to A.](img/img2.png){ height=160 }
+![New vertex D connecting to B.](img/img3.png){ height=160 }
 
 As you can see, point $C$ prevents a diagonal with the non-neighboring vertex.
 
+Using these regions, you can construct polygons of size $n > 3$. For example:
 
+![n = 4](img/img4.png){ height=160 }
+![n = 5](img/img5.png){ height=160 }
+![n = 6](img/img6.png){ height=160 }
 
-
+For a polygon of this standard shape of size $n$, there exists two ears and opposite its point exists a valid region. Since the lower $n-1$ vertices are strictly-convex, no diagonal exists between these points. Therefore each must have only a diagonal with the top vertex (the red vertex in the upper examples), and therefore there exists only one triangulation.
 
 \newpage
 
