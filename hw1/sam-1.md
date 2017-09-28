@@ -108,6 +108,14 @@ Since this finds the area of a triangle and any polygon can be triangulated, the
 
 
 ## b.
+**(a.)** When $P$ is convex, two arrays can hold all points on the positive side of the chord and on the negative side of the chord. This can be calculated by finding 
+$(C_1,C_2) \times (C_1, P_i) \forall P_i \in P$.
+Iterate through the points in order of $P$ and add them to the corresponding array given the cross product result. Insert $C_1$ to both arrays on the first polarity change, and $C_2$ on the second. Then use the 4.a. formula to calculate the area of each sub-polygon in both arrays.
+
+Since the arrays together form a single copy of $P$, the space complexity is $O(n)$.
+Since $P$ is iterated though once the first time, and once more when finding areas of both sub-polygon, the algorithm runs in $O(n)$ time.
+
+**(b.)** When P is an arbitrary simple polygon, the above method will not work. Instead, iterate through all points and add 
 
 
 # 5.
