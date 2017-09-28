@@ -22,7 +22,9 @@ def isClockwise(poly):
 	# Clockwise is negative
     return sum <= 0
 ```	
-The algorithm takes the cross product of every edge.
+The algorithm takes the cross product of every edge and checks the polarity of the result. It sums all these polarities and if it is $< 0$ it is clockwise.
+
+The algorithm only iterates through all points once, and calculating cross product is done ain constant time. Therefore the runtime $= O(n)$.
 
 ## b.
 
@@ -34,7 +36,7 @@ The algorithm takes the cross product of every edge.
 
 A triangle or polygon of size $n = 3$ has a unique triangulation. Adding a vertex to this polygon will create a quadrilateral. This vertex can be placed anywhere inside the triangle and produce a unique triangulation, but this is not the case for polygons of size $n > 3$ with unique triangulation. 
 
-If we look outside the triangle we find areas that guarantee a quadrilateral with unique triangulation. A vertex placed inside these regions will not prodvuce a diagonal in the new quadrilateral.
+If we look outside the triangle we find areas that guarantee a quadrilateral with unique triangulation. A vertex placed inside these regions will not produce a diagonal in the new quadrilateral.
 
 ![Regions marked with green angles are valid.](img/img1.png){ height=100 }
 
@@ -49,7 +51,7 @@ Using these regions, you can construct polygons of size $n > 3$. For example:
 ![n = 5](img/img5.png){ height=160 }
 ![n = 6](img/img6.png){ height=160 }
 
-For a polygon of this standard shape of size $n$, there exists two ears and opposite its point exists a valid region. Since the lower $n-1$ vertices are strictly-convex, no diagonal exists between these points. Therefore each must have only a diagonal with the top vertex (the red vertex in the upper examples), and therefore there exists only one triangulation.
+For a polygon of this standard shape of size $n$, there exists valid regions outside its two ears. Since the lower $n-1$ vertices are strictly-convex, no diagonal exists between these points. Therefore each must have only a diagonal with the top vertex (the red vertex in the upper examples), and therefore there exists only one triangulation.
 
 \newpage
 
@@ -94,28 +96,15 @@ Since this finds the area of a triangle and any polygon can be triangulated, the
 
 
 ## b.
-!!!
-**Together**
-!!!
+
 
 # 5.
 ## a.
-!!!
-**Together**
-!!!
+The sum of interior angles is equal to $\pi (n-2)$. Reflex vertices are interior angles with an angle $>\pi$. Therefore there are at most $n-3$ reflex angles. In this worst case, there is an angle that can contain a diagonal with each reflex vertex, therefore there can be $n-3$ indispensable diagonals incident on that vertex.
 
 ## b.
-!!!
-**Together**
-!!!
 
 ## c.
-!!!
-**Together**
-!!!
 
 ## d.
-!!!
-**Together**
-!!!
 
