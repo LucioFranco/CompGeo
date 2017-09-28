@@ -22,7 +22,7 @@ def isClockwise(poly):
     for i in range(0, poly.n):
         p = (poly.x[i], poly.y[i])
         # Account for wrap-around
-        next = (i + 1) % poly.n 
+        next = (i + 1) % poly.n
         q = (poly.x[next], poly.y[next])
         if cross(p, q) > 0: sum += 1
         elif cross(p, q) < 0: sum -=1
@@ -32,14 +32,19 @@ def isClockwise(poly):
     return sum <= 0
 
 def isSimple(poly):
+    # Inital cross product
     prev_x_prod = cross(poly.x[0], poly.y[0])
+    # The max amount of parity changes allowed for it to still be simple
     max_change = 1
     for i in range(1, poly.n):
+        # Compute cross product at i
         current_cross = cross(poly.x[i], poly.y[i])
+        # If the product of both is negative then one of them was a different
+        # sign, therefore there is a sign change.
         if (pre_x_prod * current_cross) < 0:
             max_change -= 1
-
-    return max_change < 0
+        pre_x_prod = current_cross
+    return max_change >= 0
 
 
 # Primary algorithm for problem 1b.
