@@ -17,8 +17,9 @@ def cross(v1,v2):
 
 
 
-# n = 6, tangents at L(1,3) and R(3,1)
-p = Polygon([(1,2),(1,3),(2,3),(3,2),(3,1),(2,1)])
+# polygon in CCW order, n = 6
+# tangents at L(1,3) and R(3,1)
+p = Polygon([(2,1),(3,1),(3,2),(2,3),(1,3),(1,2)])
 
 
 
