@@ -2,20 +2,7 @@
 # Homework 2
 # 10/17/17
 
-
-# Help classes/functions ----------------------
-class Polygon:
-    def __init__(self, points):
-        self.n = len(points)
-        self.points = points
-        self.x, self.y = zip(*points)
-
-# helper function for cross product
-def cross(v1,v2):
-    return (v1[0] * v2[1]) - (v2[0] * v1[1])
-
-# End helpers --------------------------------
-
+from lib import *
 
 # 1.
 def left_tan(p, q):
@@ -32,5 +19,3 @@ p = Polygon([(2,1),(3,1),(3,2),(2,3),(1,3),(1,2)])
 
 result = left_tan(p, (0,0))
 print result
-
-
