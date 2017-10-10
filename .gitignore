@@ -103,3 +103,4 @@ ENV/
 # Extra
 .sam-1.md.native.pandoc
 .DS_Store
+Cargo.lock
