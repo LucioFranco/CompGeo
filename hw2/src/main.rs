@@ -5,23 +5,31 @@ use util::util::{Polygon, is_left, is_right};
 // returns index of left tangenet to point q
 fn left_tangent(n: u64, p: Vec<(f64, f64)>, q: (f64, f64)) -> u64 {
 
-    // above = left
-    // below = right
-
-
     // test if first point is left tangent
-    if is_right(p[0], p[1], q) && is_left(p[(n - 1) as usize], p[0], q) {
+    println!(
+        "0 - {} && !{} => {}",
+        is_left(q, p[(n - 1) as usize], p[0]),
+        is_left(q, p[0], p[1]),
+        is_left(q, p[(n - 1) as usize], p[0]) && !is_left(q, p[0], p[1])
+    );
+    if is_right(q, p[0], p[1]) && is_left(q, p[(n - 1) as usize], p[0]) {
         return 0;
     }
-    for i in 1..n {
-        // previous point
+
+    let a = 0;
+    let b = n;
+    for i in 1..(n - 1) {
         let prev = p[(i - 1) as usize];
-        // current point
         let current = p[i as usize];
+        let next = p[(i + 1) as usize];
 
-        let left = is_left(prev, current, q);
-
-        println!("{} - ({}, {}): {}", i, current.0, current.1, left);
+        println!(
+            "{} - {} && !{} => {}",
+            i,
+            is_left(q, prev, current),
+            is_left(q, current, next),
+            (is_left(q, prev, current) && !is_left(q, current, next))
+        );
     }
 
     (n - 1) as u64
