@@ -55,13 +55,15 @@ The algorithm performs an exponential search on the points of $P$ and returns th
 It is possible to report all positive slope lines using a line-sweep in the dual plane.
 Each point can be transformed to the dual plane as lines. These lines will produce a total of ${{n}\choose{2}}$ intersections (or the induced lines in the primal). We want to report the total number of these dual-plane intersections that have $x$-coordinates greater than zero (which will be all induce lines with positive slope).
 
-Starting at $x=0$ in the dual plane, we add all lines to the status. Iterating from top to bottom on this status, we can check each pair of lines. Two adjacent lines, top with positive slope, and bottom with negative slope can be ignored, since they will not intersect to the right of the status position. All other adjacent pairs need to be checked and intersections added to the event queue. At each event, swap lines and check against their neighbors.
+**(a.)** Starting at $x=0$ in the dual plane, we add all lines to the status. Iterating from top to bottom on this status, we can check each pair of lines. Two adjacent lines, top with positive slope, and bottom with negative slope can be ignored, since they will not intersect to the right of the status position. All other adjacent pairs need to be checked and intersections added to the event queue. At each event, swap lines and check against their neighbors.
 
+**(b.)** Do the same as **a.**, but start at $x=m^{'}$ and stop at $x=m^{"}$ when sweeping through the dual plane.
 
-So for $n$ points, we have $k$ induced lines (or $k$ intersections in the dual).
+So for $n$ points, we have $k$ induced lines with positive slope (or $k$ intersections in the dual with $x>0$).
 Each event takes O(log$n$) using a balanced binary tree. Initially adding all the points to the status takes O($n$log$n$). Therefore our total runtime will be O($n$log$n$ + $k$log$n$) $=$ O(($n+k)$log$n$). This is an improvement on the naive brute-force method, checking all ${{n}\choose{2}}$ pairs in $\theta (n^{2})$.
 
 # 4.
+
 
 # 5.
 
