@@ -45,8 +45,10 @@ PROCEDURE LeftTangent(Polygon p, Point q):
 		i = min(i + offset, n - 1)
 ```
 
-The algorithm performs an exponential search on the points of $P$ and returns the line segment between q and the tangent point. The `isLeft(a, b, c)` function returns the polarity of `cross(b-a, c-b)`. Exponential search runs in $O(log n)$.
+The algorithm performs an exponential search on the points of $P$ and returns the line segment between q and the tangent point. The `isLeft(a, b, c)` function returns the polarity of `cross(<a,b>, <b,c>)`. Exponential search runs in $O(log n)$.
 
+
+\newpage
 
 # 3.
 ## a.
