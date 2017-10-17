@@ -65,4 +65,10 @@ There are a possible $2n$ events because each segment has two endpoints. At each
 
 ## 5)
 
+To solve this problem a randomized incremental approach can be used. Initally we start by selecting two points at random. At this iteration we can form the line that goes through orthogonally the midpoint of the line segment formed from the two points. Now we can build a hashtable that will store all points with in $r$ where $r$ is the nearest distance to the line from a point. We can bucket them via $x / r$ and $y / r$ similar to the 2D bucketing solution from homework 1.
+
+Now that we have built the hashtable, we can now randomly pick another point and place it in the hashmap, if there is an item within the hashtable at the same location then we know there can not be a new line $l$ formed because the points within the bucket are too close to redo the soution. If there isnt a point within the same bucket we check all eight neighbors, if we find a point within those buckets, we then run a L2 test to see if the new added point is further away from the point in the bucket we are checking than the nearest point currently from $l$. If it is then we must form a new line, [criteria for forming new line]. If there is a point within L2 distance the new solution can not be better than the previous therefore we can keep the previous.
+
+Since to build the hashmap it takes $O(i)$ and we must loop through everypoint atleast once the runtime is ......
+
 
