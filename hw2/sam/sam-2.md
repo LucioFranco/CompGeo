@@ -64,7 +64,37 @@ Each event takes O(log$n$) using a balanced binary tree. Initially adding all th
 
 # 4.
 
+Visible points can be reported using a rotating sweep line. Each endpoint lies on a ray starting from $p$ at an angle of $\alpha$. Let such a ray be denoted as $R(\alpha)$.
+
+Sort each endpoint on $\alpha$ to form a schedule (ties split on distance from $p$). Starting with the first endpoint in the schedule, add the corresponding segment to a min-heap ordered on  distance from $p$. At each event, a segment is either added or removed from the heap since a line segment either begins or ends at endpoints. If a segment has been added already, it gets removed. Since the segments are disjoint (do not cross), we can assume that the position in the heap will not change between events. 
+
+At the end of each heap operation, the minimum element is peeked at and reported as visible. This is the closest element to $p$ at this point in the schedule and therefore visible from $p$.
+
+There are a total of $2n$ events in the schedule, since each segment has two endpoints. At each event, a heap insertion or deletion is performed in O(log$n$) and a minimum is peeked at O($1$). Therefore, the algorithm requires O($n$log$n$) for initially sorting the endpoints, O($n$log$n$) for processing each event in the schedule, and O($n$log$n$) to sort and remove duplicate reports from the result, giving us a total runtime of O($n$log$n$).
+
+
 
 # 5.
 
+**Note:**
+
+This problem can be solved similarly to the Widest Empty Corridor problem. The Widest Empty Corridor problem searches for the two parallel lines that have no points between them with the maximum orthogonal distance $d$ between the lines. Our solution would be the line parallel to these two lines and a distance $d/2$ from them.
+
+Houle and Maciel gave a O($n^2$)-time and O($n$)-space algorithm for solving this problem. This consists of constructing an arrangement on $S$ in O($n^2$) and then processing each face $f$ in the arrangement to construct a widest empty corridor. Processing each face $f$ takes O($|f|$), therefore the time to process all faces is O($n^2$) since the arrangement has O($n^2$) vertices.
+
+Finding our line will be fairly straight-forward, needing only to transform one of the widest corridor lines orthogonally by $d/2$.
+
+Since these sort of problems require the construction of an arrangement of $S$, other solutions will require O($n^2$) as well. 
+
+*Source: [Widest-Corridor Problems - Janardan and Preparata, 1994](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.102.5615&rep=rep1&type=pdf "Source")*
+
+**My approach:**
+
+Another approach would be to transform all $n$ points of $S$ to lines in the dual plane. We create an arrangement on these lines in order to create a schedule for the line sweep. Each event would be the intersection of dual-lines. At each event, we check the distance to the intersection's neighboring lines in the vertical direction. While doing the sweep, we keep track of the maximum distance and which three points are involved. At the end, the maximum distance will give us the three points that form a widest corridor.
+
+A degenerate case would be that the widest corridor is perpendicular to the line-segment between two points and its distance being the Euclidean distance between those points. This case occurs when an intersection in the dual is either the maximum or minimum at its event. In that case, also compare the distance between the points.
+
+The solution to our problem, again, is easily determined from this output. The construction of the dual-arrangement takes O($n^2$) time, resulting in O($n^2$) vertices as events. The ordering of the lines would take O($n$log$n$) and operations on this ordering will take O(log$n$). Therefore: $$T(n)=O(n^2) + O(n log n) + O(n^2)O(log n) = O(n^{2}logn)$$
+
+This is not as efficient as the first proposed algorithm, but one that I came up with on my own.
 
