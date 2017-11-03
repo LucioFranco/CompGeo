@@ -9,10 +9,7 @@ geometry: margin=1in
 
 The set of redundant half-planes are the compliment to $\cap H$, therefore they cannot be found faster than the time it takes to find $\cap H$. Therefore we should follow the given divide and conquer algorithm *(slide 19 of the linear programming slides)* to find half-planes that are not used during the merge phase.
 
-On line 6 of the algorithm:
-```
-C = IntersectConvexRegions(C_1,C_2)
-```
+On line 6 of the algorithm: `C = IntersectConvexRegions(C1,C2)`
 
 This is the merge phase of the algorithm. Half-planes not used in this action are determined and not put into $C$. Therefore, if we report half-planes each time they get removed in O($1$), the runtime of our algorithm does not increase and stays O($n$log$n$).
 
@@ -26,15 +23,24 @@ This can now be used to point-locate our query rays.
 
 Point location on $D$ can be done in O(log$n$) to find the containing face in the DCEL. We then find the edge of this face that is vertically above $u'$ in O(log$n$) time since the number of edges incident to a face is O($n$) in the worst case. Therefore our lookup time is O(log$n$).
 
+\newpage
 
 # 3.
 ## 6.1
 
-[Insert image here]
+------------------------------ --------------------------------------------------
+![](./6.1.1.png){height=450px} ![](./6.1.2.png){height=450px}
+6.1.1 - The constructed graph  6.1.2 - The trapezoidal map used to build the tree
+------------------------------ --------------------------------------------------
+
+\newpage
 
 ## 6.2
 
-[Insert image here]
+![6.2 - O($n^2$) example](./6.2.png){height=450px}
+
+This example would have $\frac{n}{2}$ diagonal segments along the bottom, and $\frac{n}{2}$ horizontal segments above. The bottom segments would be inserted one at a time, left to right, resulting in a tree of size O($n$). You then insert each of the top horizontal segments one at a time, top-down. This will cause each O($n$) trapezoids below to point to O($n$) trapezoids above, therefore resulting in a total of O($n^2$) space required.
+
 
 ## 6.13
 (Direct proof)
