@@ -6,27 +6,89 @@
 //  Copyright © 2017 Lucio Franco. All rights reserved.
 //
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Projection_traits_xy_3.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <string>
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Projection_traits_xy_3<K>  Gt;
-typedef CGAL::Triangulation_vertex_base_with_info_2<std::string, Gt> Vb;
-typedef CGAL::Triangulation_data_structure_2<Vb> Tds;
-typedef CGAL::Delaunay_triangulation_2<Gt,Tds> Delaunay;
-typedef K::Point_3   Point;
+#include <CGAL/Cartesian.h>
+#include <iostream>
+#ifndef CGAL_USE_GEOMVIEW
 int main()
 {
-    Delaunay dt;
-    Delaunay::Vertex_handle vh;
-    vh  = dt.insert(Point(0,0,0));
-    vh->info() = "Paris";
-    vh = dt.insert(Point(1,0,0.1));
-    vh->info() = "London";
-    vh = dt.insert(Point(0,1,0.2));
-    vh->info() = "New York";
-    
+    std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
     return 0;
 }
+#else
+#include <fstream>
+#include <unistd.h> // for sleep()
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/IO/Geomview_stream.h>
+#include <CGAL/IO/Triangulation_geomview_ostream_2.h>
+#include <CGAL/IO/Triangulation_geomview_ostream_3.h>
+#include <CGAL/intersections.h>
+typedef CGAL::Cartesian<double>  K;
+typedef K::Point_2 Point2;
+typedef CGAL::Projection_traits_xy_3<K> Gt3;
+typedef Gt3::Point Point3;
+typedef CGAL::Delaunay_triangulation_2<K>   Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Gt3> Terrain;
+typedef CGAL::Delaunay_triangulation_3<K>   Delaunay3d;
+int main()
+{
+    CGAL::Geomview_stream gv(CGAL::Bbox_3(-100, -100, -100, 600, 600, 600));
+    gv.set_line_width(4);
+    // gv.set_trace(true);
+    gv.set_bg_color(CGAL::Color(0, 200, 200));
+    // gv.clear();
+    Delaunay D;
+    Delaunay3d D3d;
+    Terrain T;
+    std::ifstream iFile("data/points3", std::ios::in);
+    Point3 p;
+    while ( iFile >> p )
+    {
+        D.insert( Point2(p.x(), p.y()) );
+        D3d.insert( p );
+        T.insert( p );
+    }
+    // use different colors, and put a few sleeps/clear.
+    gv << CGAL::BLUE;
+    std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
+    gv.set_wired(true);
+    gv << D;
+#if 1 // It's too slow !  Needs to use OFF for that.
+    gv << CGAL::RED;
+    std::cout << "Drawing its Voronoi diagram.\n";
+    gv.set_wired(true);
+    D.draw_dual(gv);
+#endif
+    sleep(5);
+    gv.clear();
+    std::cout << "Drawing 2D Delaunay triangulation in non-wired mode.\n";
+    gv.set_wired(false);
+    gv << D;
+    sleep(5);
+    gv.clear();
+    std::cout << "Drawing 3D Delaunay triangulation in wired mode.\n";
+    gv.set_wired(true);
+    gv << D3d;
+    sleep(5);
+    gv.clear();
+    std::cout << "Drawing 3D Delaunay triangulation in non-wired mode.\n";
+    gv.set_wired(false);
+    gv << D3d;
+    sleep(5);
+    gv.clear();
+    std::cout << "Drawing Terrain in wired mode.\n";
+    gv.set_wired(true);
+    gv << T;
+    sleep(5);
+    gv.clear();
+    std::cout << "Drawing Terrain in non-wired mode.\n";
+    gv.set_wired(false);
+    gv << T;
+    std::cout << "Enter a key to finish" << std::endl;
+    char ch;
+    std::cin >> ch;
+    return 0;
+}
+#endif
+
