@@ -22,10 +22,7 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
-  #create_single_source_cgal_program( "input.cpp" )
-  #create_single_source_cgal_program( "kernel.cpp" )
-  create_single_source_cgal_program( "gv_terrain.cpp" )
-
+  create_single_source_cgal_program( "contour_line.cpp" )
 else()
 
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

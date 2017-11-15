@@ -1,7 +1,7 @@
 ## GLOBAL EXCLUSION PATTERNS ##
 
 # ENTRIES TO IGNORE BINARY PROGRAMS GENERATED FROM CMAKE
-gv_terrain
+contour_line
 
 # CMake auxiliary files:
 cmake_install.cmake
