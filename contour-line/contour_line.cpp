@@ -15,17 +15,17 @@ int main()
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Polygon_2.h>
 
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_2.h>
-
-
 
 typedef CGAL::Cartesian<double> K;
 
 typedef K::Point_2 Point2;
 typedef CGAL::Projection_traits_xy_3<K> Gt3;
 typedef Gt3::Point Point3;
+typedef CGAL::Polygon_2<K> Polygon;
 
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
 
@@ -44,9 +44,11 @@ std::vector<Point2> load_from_file(const char* file)
 }
 
 // Returns the contour polygons generated from the Delaunay
-void generate_contour_line(float height, Delaunay D)
+std::vector<Polygon>  generate_contour_line(float height, Delaunay D)
 {
-  return;
+  std::vector<Polygon> contours;
+
+  return contours;
 }
 
 CGAL::Geomview_stream setup_geomview()
