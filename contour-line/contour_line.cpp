@@ -127,46 +127,55 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
   return contours;
 }
 
+// Initialize Geomview settings and return Geomview_stream context
 CGAL::Geomview_stream setup_geomview()
 {
   CGAL::Geomview_stream gv(CGAL::Bbox_3(-100, -100, -100, 600, 600, 600));
   gv.set_line_width(4);
   gv.set_vertex_radius(20);
-  //gv.set_trace(true);
   gv.set_bg_color(CGAL::Color(0, 200, 200));
-  // gv.clear();
 
   return gv;
 }
 
+// Draws Polygon_2 in a Geomview_stream context that is passed by ref
 void draw_polygon(CGAL::Geomview_stream& gv, Polygon p)
 {
   gv << CGAL::RED;
   std::cout << "Drawing polygon" << std::endl;
   gv.set_wired(true);
+
+  // Iterate through the edges and display them
   for (EdgeIterator ei = p.edges_begin(); ei != p.edges_end(); ++ei)
     gv << *ei;
 }
 
 int main()
 {
+  // Setup Geomview Context
   CGAL::Geomview_stream gv = setup_geomview();
 
+  // format = point.x point.y point.z
   std::vector<Point3> points = load_from_file("data/points3");
-  Delaunay D;
 
+  // Build delaunay triangulation from data points
+  Delaunay D;
   for(Point3 p : points)
     D.insert(p);
 
+  // Draw Delaunay in geomview
   gv << CGAL::BLUE;
   std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D;
 
+  // Enter contour elevation query
   std::cout << "Enter elevation: ";
   float test_height;
   std::cin >> test_height;
-  generate_contour_line(test_height, D);
+  std::vector<Polygon> contours = generate_contour_line(test_height, D);
+
+  // TODO: Draw contour from list of Polygons
 
   std::cout << "Enter a key to finish" << std::endl;
   char ch;
