@@ -12,6 +12,8 @@ int main()
 
 #include <fstream>
 #include <unistd.h> // for sleep()
+#include <algorithm>
+#include <tuple>
 
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -58,29 +60,27 @@ std::vector<Point3> load_from_file(const char* file)
   return points;
 }
 
-// get index of highest vertex of face
-int max_vertex(Face_handle fh)
+// get containg edge (high, low)
+std::pair<int,int> containing_edge(std::vector<double> heights, int height)
 {
-  float max = 0;
-  for(int i = 1; i <= 2; i++) {
-    float height = fh->vertex(i)->point().z();
-    if (height > fh->vertex(max)->point().z()) max = i;
+  int high, low;
+  int max =  std::numeric_limits<double>::max();
+  for(int i = 0; i < heights.size(); i++) {
+    if (heights[i] > height && heights[i] < max)
+      high = i;
   }
-  return max;;
+  int min =  std::numeric_limits<double>::min();
+  for(int i = 0; i < heights.size(); i++) {
+    if (i != max && heights[i] < height && heights[i] > min)
+      low = i;
+  }
+  return std::make_pair(high, low);
 }
-
-// get adjacent face sharing highest vertex
-//Face_handle adjacent(Face_handle fh, Delaunay &D)
-//{
-//  Vertex_handle vh = max_vertex(fh);
-//  Face_circulator c = D.incident_faces(vh, fh);
-//  return ++c;
-//}
-
 
 // Returns the contour polygons generated from the Delaunay
 std::vector<Polygon> generate_contour_line(float height, Delaunay D)
 {
+  std::cout << "Asdfsf";
   std::vector<Polygon> contours;
 
   // Build interval skip list
@@ -94,35 +94,66 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
   // Find all faces at height
   std::list<Interval> level;
   isl.find_intervals(height, std::back_inserter(level));
-
+  std::cout << "Asdfsf";
   int i = 1;
   while(!level.empty() && i > 0) {
     Interval &interval = level.front();
     level.pop_front();
 
     Polygon poly;
-
     Face_handle fh = interval.face_handle();
-    int highest_index = max_vertex(fh);
 
-    
-    
+    level.remove(interval);
+    // Loop for the entire contour, stop if not in the level list
+    // std::find
+    int test_iterator = 2;
+    std::cout << "Asdfsaf";
+    while(test_iterator > 0) {
+      
+      int high, low;
+      std::vector<double> heights;
+      heights.push_back(fh->vertex(0)->point().z());
+      heights.push_back(fh->vertex(1)->point().z());
+      heights.push_back(fh->vertex(2)->point().z());
+      
+      std::pair<int,int> edge  = containing_edge(heights, height);
+      int next_face = 3 - high - low;
+	   
+      // --- Interpolate Contour Point ---
+      // Weight is determined from the elevation(z-axis).
+      // w = ( dist to new elevation ) / ( distance between p1 and p2 )
+      // w = (height - p1.z) / (p2.z - p1.z)
+      double w = (height - fh->vertex(low)->point().z()) /
+	(fh->vertex(high)->point().z() - fh->vertex(low)->point().z());
+      // Find x and y from weighted average along each axis
+      // x = p1.x*(1 - w) + p2.x*(w)
+      double x = fh->vertex(low)->point().x() * (1 - w) +
+	fh->vertex(high)->point().x() * w;
+      // y = p1.y*(1 - w) + p2.y*(w)
+      double y = fh->vertex(low)->point().y() * (1 - w) +
+	fh->vertex(high)->point().y() * w;
+      
+      poly.push_back(Point2(x,y));
+      // --- End interpolate ---
 
-    std::cout << "0: " << fh->vertex(0)->point() << std::endl;
-    std::cout << "1: " << fh->vertex(1)->point() << std::endl;
-    std::cout << "2: " << fh->vertex(2)->point() << std::endl;
-    
-    std::cout << "Highest vertex: " << highest_index << std::endl;
-    
-    
-    //Face_handle next = adjacent(fh, D);
+      std::cout << "yesyesyes";
+      fh = fh->neighbor(next_face);
+      test_iterator--;
+      
+      // Test output
+      std::cout << "0: " << fh->vertex(0)->point() << std::endl;
+      std::cout << "1: " << fh->vertex(1)->point() << std::endl;
+      std::cout << "2: " << fh->vertex(2)->point() << std::endl;
+      
+      std::cout << "High: " << high << ", low: " << low << std::endl;
+      std::cout << "Next Face: " << next_face << std::endl;
+    }
 
-    //Edge_circulator ec = D.incident_edges(max_vertex(fh), fh);
-
-    //poly.push_back(fh);
+    contours.push_back(poly);
     
     i--;
   }
+
 
   return contours;
 }
@@ -152,7 +183,6 @@ void draw_polygon(CGAL::Geomview_stream& gv, Polygon p)
 
 int main()
 {
-  // Setup Geomview Context
   CGAL::Geomview_stream gv = setup_geomview();
 
   // format = point.x point.y point.z
@@ -164,6 +194,7 @@ int main()
     D.insert(p);
 
   // Draw Delaunay in geomview
+  
   gv << CGAL::BLUE;
   std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
@@ -171,16 +202,18 @@ int main()
 
   // Enter contour elevation query
   std::cout << "Enter elevation: ";
-  float test_height;
-  std::cin >> test_height;
-  std::vector<Polygon> contours = generate_contour_line(test_height, D);
+  //double test_height;
+  //std::cin >> test_height;
+  std::vector<Polygon> contours = generate_contour_line(170.0, D);
 
-  // TODO: Draw contour from list of Polygons
+  for(Polygon  polygon : contours) {
+    draw_polygon(gv, polygon);
+  }
 
   std::cout << "Enter a key to finish" << std::endl;
   char ch;
   std::cin >> ch;
-
+  
   return 0;
 }
 #endif
