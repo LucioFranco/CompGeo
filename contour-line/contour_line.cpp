@@ -4,7 +4,7 @@
 
 #ifndef CGAL_USE_GEOMVIEW
 int main()
-  3{
+{
   std::cout << "Geomview doesn't work on Windows, so..." << std::endl;
   return 0;
 }
