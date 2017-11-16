@@ -34,7 +34,10 @@ typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
 
 typedef Delaunay::Face_handle Face_handle;
+typedef Delaunay::Vertex_handle Vertex_handle;
 typedef Delaunay::Finite_faces_iterator Finite_faces_iterator;
+typedef Delaunay::Face_circulator Face_circulator;
+typedef Delaunay::Edge_circulator Edge_circulator;
 typedef CGAL::Level_interval<Face_handle> Interval;
 typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 
@@ -46,11 +49,31 @@ std::vector<Point3> load_from_file(const char* file)
 
   Point3 p;
   while(iFile >> p) {
-    points.push_back(Point3(p.x(), p.y(), p.z()));
+    points.push_back(p);
   }
 
   return points;
 }
+
+// get index of highest vertex of face
+int max_vertex(Face_handle fh)
+{
+  float max = 0;
+  for(int i = 1; i <= 2; i++) {
+    float height = fh->vertex(i)->point().z();
+    if (height > fh->vertex(max)->point().z()) max = i;
+  }
+  return max;;
+}
+
+// get adjacent face sharing highest vertex
+//Face_handle adjacent(Face_handle fh, Delaunay &D)
+//{
+//  Vertex_handle vh = max_vertex(fh);
+//  Face_circulator c = D.incident_faces(vh, fh);
+//  return ++c;
+//}
+
 
 // Returns the contour polygons generated from the Delaunay
 std::vector<Polygon> generate_contour_line(float height, Delaunay D)
@@ -69,13 +92,35 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
   std::list<Interval> level;
   isl.find_intervals(height, std::back_inserter(level));
 
-  // Print list of faces at height
-  for(std::list<Interval>::iterator it = level.begin();
-      it != level.end();
-      ++it) {
-    std::cout << D.triangle(it->face_handle()) << std::endl;
+  int i = 1;
+  while(!level.empty() && i > 0) {
+    Interval &interval = level.front();
+    level.pop_front();
+
+    Polygon poly;
+
+    Face_handle fh = interval.face_handle();
+    int highest_index = max_vertex(fh);
+
+    
+    
+
+    std::cout << "0: " << fh->vertex(0)->point() << std::endl;
+    std::cout << "1: " << fh->vertex(1)->point() << std::endl;
+    std::cout << "2: " << fh->vertex(2)->point() << std::endl;
+    
+    std::cout << "Highest vertex: " << highest_index << std::endl;
+    
+    
+    //Face_handle next = adjacent(fh, D);
+
+    //Edge_circulator ec = D.incident_edges(max_vertex(fh), fh);
+
+    //poly.push_back(fh);
+    
+    i--;
   }
-  
+
   return contours;
 }
 
@@ -104,6 +149,11 @@ int main()
   std::cout << "Drawing 2D Delaunay triangulation in wired mode.\n";
   gv.set_wired(true);
   gv << D;
+
+  std::cout << "Enter elevation: ";
+  float test_height;
+  std::cin >> test_height;
+  generate_contour_line(test_height, D);
 
   std::cout << "Enter a key to finish" << std::endl;
   char ch;
