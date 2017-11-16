@@ -20,34 +20,62 @@ int main()
 #include <CGAL/IO/Geomview_stream.h>
 #include <CGAL/IO/Triangulation_geomview_ostream_2.h>
 
+#include <CGAL/Interval_skip_list.h>
+#include <CGAL/Level_interval.h>
+
+
 typedef CGAL::Cartesian<double> K;
 
 typedef K::Point_2 Point2;
-typedef CGAL::Projection_traits_xy_3<K> Gt3;
-typedef Gt3::Point Point3;
+typedef CGAL::Projection_traits_xy_3<K> Gt;
+typedef K::Point_3 Point3;
 typedef CGAL::Polygon_2<K> Polygon;
 
-typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
+typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
+
+typedef Delaunay::Face_handle Face_handle;
+typedef Delaunay::Finite_faces_iterator Finite_faces_iterator;
+typedef CGAL::Level_interval<Face_handle> Interval;
+typedef CGAL::Interval_skip_list<Interval> Interval_skip_list;
 
 // loads an array of points from a file
-std::vector<Point2> load_from_file(const char* file)
+std::vector<Point3> load_from_file(const char* file)
 {
-  std::vector<Point2> points;
+  std::vector<Point3> points;
   std::ifstream iFile(file, std::ios::in);
 
   Point3 p;
   while(iFile >> p) {
-    points.push_back(Point2(p.x(), p.y()));
+    points.push_back(Point3(p.x(), p.y(), p.z()));
   }
 
   return points;
 }
 
 // Returns the contour polygons generated from the Delaunay
-std::vector<Polygon>  generate_contour_line(float height, Delaunay D)
+std::vector<Polygon> generate_contour_line(float height, Delaunay D)
 {
   std::vector<Polygon> contours;
 
+  // Build interval skip list
+  Interval_skip_list isl;
+  for(Finite_faces_iterator fh = D.finite_faces_begin();
+      fh != D.finite_faces_end();
+      ++fh) {
+    isl.insert(Interval(fh));
+  }
+
+  // Find all faces at height
+  std::list<Interval> level;
+  isl.find_intervals(height, std::back_inserter(level));
+
+  // Print list of faces at height
+  for(std::list<Interval>::iterator it = level.begin();
+      it != level.end();
+      ++it) {
+    std::cout << D.triangle(it->face_handle()) << std::endl;
+  }
+  
   return contours;
 }
 
@@ -66,10 +94,10 @@ int main()
 {
   CGAL::Geomview_stream gv = setup_geomview();
 
-  std::vector<Point2> points = load_from_file("data/points3");
+  std::vector<Point3> points = load_from_file("data/points3");
   Delaunay D;
 
-  for(Point2 p : points)
+  for(Point3 p : points)
     D.insert(p);
 
   gv << CGAL::BLUE;
