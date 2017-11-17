@@ -61,26 +61,14 @@ Therefore, the algorithm to present D'Artagnan is to construct the minimum spann
 # 3. (or) 4.
 
 
-
+\newpage
 # 5.
 ## a.
 
-```
-NN(q: query point, n: node, p: ref point, d: ref distance)
-[recursively]
-if n = leaf: [base case]
-	d' = dist(q, n.point)
-	if d' < d:
-		d = d'
-		p = n.point
-if n = node:
-	if dist(q, n) < d, then:
-		NN(q, n.left, p, d)
-		NN(q, n.right, p, d)
-return p
-```
+First search for the leaf where $q$ would go. Let $d$ be the Euclidean distance between $q$ and this point $p$. We now have to check regions with distance to $q$ smaller than $d$. So recursively iterate back up the tree. At a node, check if the distance to its defining line is smaller than $d$. If it is, recurse down its subtree. If not, continue on. If a leaf is reached, check its Euclidean distance to $q$. If it is closer than $d$, set $d$ to this new distance. At the end of the search, the remaining point $p$ with distance $d$ to $q$ will be its nearest neighbor.
 
-Initial call: $NN(q, root, null, \infty)$
+The initial search takes O(log$n$). Searching for points closer than $d$ is essentially a 2D rectangular query search, with a decreasing rectangle. Therefore it takes O($\sqrt n$).
+
 
 ## b.
 
