@@ -13,12 +13,12 @@ For a flip graph to have a single node it must be formed from a point set that p
 
 ![Two examples - Point sets that produce a single flip graph](img/1.a.png){width=300px}
 
-
+\newpage
 ### b)
 
 Similar to $a)$ we can construct a point set that produces two nodes in the flip graph. This can be done by expanding upon the triangle at the bottom. We can form a convex polygon with another point. This convex polygon will produce a flip since the polygon formed by those four points is convex.
 
-
+![Example of altering the solution from 1.a.](img/1.b.png){width=200px}
 
 ## 2)
 
@@ -34,6 +34,15 @@ This algorithim takes $O(nlogn)$ since building the minimum spanning tree can be
 
 ## 5)
 
-a)
+### a)
+
+### b)
+
+To do this, one would store $log n$ elements in each instance of the kd-tree. On insertion of a new element it would reate a new kd-tree. The intersection query would then search each tree individually which would take at max $log n$ time since the height of the largest tree is no more than $log n$.
+
+### c)
+
+One method would be to use the method from $b)$ but instead of bucketing by $log n$ bucket by a constant number $k$ elements in each tree. Since $k$ is a constant it would take constant time to rebuild the small trees and therefore insertions and deletions would run in O(k log k) which would be small for a small value of $k$.
+
 
 
