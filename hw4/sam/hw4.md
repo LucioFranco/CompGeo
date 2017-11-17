@@ -32,7 +32,7 @@ The point set can be constructed the same as 1.a., but with one of the collinear
 
 ## c.
 
-![](img/1.c.1.png){width=200px}
+![](img/1.c.1.png){width=250px}
 
 
 \newpage
@@ -59,23 +59,26 @@ Therefore, the algorithm to present D'Artagnan is to construct the minimum spann
 
 
 
-
 # 3. (or) 4.
+
+(Neither)
+
 
 
 \newpage
 # 5.
 ## a.
 
-First search for the leaf where $q$ would go. Let $d$ be the Euclidean distance between $q$ and this point $p$. We now have to check regions with distance to $q$ smaller than $d$. So recursively iterate back up the tree. At a node, check if the distance to its defining line is smaller than $d$. If it is, recurse down its subtree. If not, continue on. If a leaf is reached, check its Euclidean distance to $q$. If it is closer than $d$, set $d$ to this new distance. At the end of the search, the remaining point $p$ with distance $d$ to $q$ will be its nearest neighbor.
+First search for the leaf where $q$ would go. Let $d$ be the Euclidean distance between $q$ and the point $p$ in the leaf. We now have to check regions with distance to $q$ smaller than $d$. So recursively iterate back up the tree. At a node, check if the distance to its defining line is smaller than $d$. If it is, recurse down its subtree. If not, continue on. If a leaf is reached, check its Euclidean distance to $q$. If it is closer than $d$, set $d$ to this new distance. At the end of the search, the remaining point $p$ with distance $d$ to $q$ will be its nearest neighbor.
 
 The initial search takes O(log$n$). Searching for points closer than $d$ is essentially a 2D rectangular query search, with a decreasing rectangle. Therefore it takes O($\sqrt n$).
 
 
 ## b.
 
-
+You could split the set into smaller trees of a small constant size $k$. This would result in $n/k$ smaller trees totally ordered on $x$ coordinate. For small trees, the depth is constant and therefore the query time is constant. This would allow for O(log$n/k$) to find the tree the insertion falls in, and constant time for inserting into the small tree. The maximum size for each of these trees would be some scalar of $k$ (and therefore constant). Once insertion reaches this limit, split the tree in half and rebuild two new trees. This forms a new split based on $x$ coordinate. Since there are a total of $n$ points at any time in the data structure, the number of trees cannot grow to be larger than $n$. Therefore the search time and insertion time would stay O(log$n$).
 
 ## c.
 
+Since the trees are small, rebuilding a tree is constant time. So deleting an element requires locating it, removing it from the set of points in that tree and rebuilding the tree. Searching would take O(log$n$) and rebuilding would be constant.
 
