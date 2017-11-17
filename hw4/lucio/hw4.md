@@ -18,7 +18,19 @@ For a flip graph to have a single node it must be formed from a point set that p
 
 Similar to $a)$ we can construct a point set that produces two nodes in the flip graph. This can be done by expanding upon the triangle at the bottom. We can form a convex polygon with another point. This convex polygon will produce a flip since the polygon formed by those four points is convex.
 
-![Example of altering the solution from 1.a.](img/1.b.png){width=200px}
+![Modified version of 1.a.](img/1.b.png){width=200px}
+
+### c)
+
+![Diameter 3](img/1.c.1.png){width=250px}
+
+
+![Diameter 3](img/1.c.2.jpg){width=250px}
+
+
+![Diameter 4](img/1.c.3.jpg){width=250px}
+
+\newpage
 
 ## 2)
 
@@ -36,13 +48,14 @@ This algorithim takes $O(nlogn)$ since building the minimum spanning tree can be
 
 ### a)
 
+To find the closest point to query point $q$, one must search for the leaf where $q$ would go. Let $d$ be the Eclidean distance between $q$ and the point found during the search where we would split on. Now we have to check within the cirlce that is created from the point $q$ and the distance $d$ as the radius. Now recursively go back up the tree at each node, check if the distance to its defining line is smaller than $d$. If it is, recurse down its subtree and check its nodes, once arriving at a leaf node check its distance to $q$. If it is less than $d$ then update $d$ and the current closest point. If the defining line is not within $d$ then its sub-tree can be pruned.
+
+The inital search takes $O(logn)$. Searching for points closer than $d4 is the 2D rectangular query search, with a decreasing rectangle, and there for $O(\sqrt{n})$.
+
 ### b)
 
-To do this, one would store $log n$ elements in each instance of the kd-tree. On insertion of a new element it would reate a new kd-tree. The intersection query would then search each tree individually which would take at max $log n$ time since the height of the largest tree is no more than $log n$.
+To do this, one would store $log n$ elements in each instance of the kd-tree. On insertion of a new element it would recreate a new kd-tree. The intersection query would then search each tree individually which would take at max $log n$ time since the height of the largest tree is no more than $log n$.
 
 ### c)
 
 One method would be to use the method from $b)$ but instead of bucketing by $log n$ bucket by a constant number $k$ elements in each tree. Since $k$ is a constant it would take constant time to rebuild the small trees and therefore insertions and deletions would run in O(k log k) which would be small for a small value of $k$.
-
-
-
