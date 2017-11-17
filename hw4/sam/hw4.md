@@ -32,6 +32,8 @@ The point set can be constructed the same as 1.a., but with one of the collinear
 
 ## c.
 
+![](img/1.c.1.png){width=200px}
+
 
 \newpage
 # 2.
