@@ -32,7 +32,11 @@ The point set can be constructed the same as 1.a., but with one of the collinear
 
 ## c.
 
-![](img/1.c.1.png){width=250px}
+![Diameter = 3](img/1.c.1.png){width=250px}
+
+![Diameter = 3](img/1.c.2.png){width=250px}
+
+![Diameter = 4](img/1.c.3.png){width=250px}
 
 
 \newpage

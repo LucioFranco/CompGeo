@@ -80,7 +80,6 @@ std::pair<int,int> containing_edge(std::vector<double> heights, int height)
 // Returns the contour polygons generated from the Delaunay
 std::vector<Polygon> generate_contour_line(float height, Delaunay D)
 {
-  std::cout << "Asdfsf";
   std::vector<Polygon> contours;
 
   // Build interval skip list
@@ -90,7 +89,7 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
       ++fh) {
     isl.insert(Interval(fh));
   }
-
+  
   // Find all faces at height
   std::list<Interval> level;
   isl.find_intervals(height, std::back_inserter(level));
@@ -103,11 +102,10 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
     Polygon poly;
     Face_handle fh = interval.face_handle();
 
-    level.remove(interval);
+    //level.remove(interval);
     // Loop for the entire contour, stop if not in the level list
     // std::find
-    int test_iterator = 2;
-    std::cout << "Asdfsaf";
+    int test_iterator = 1;
     while(test_iterator > 0) {
       
       int high, low;
@@ -118,13 +116,21 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
       
       std::pair<int,int> edge  = containing_edge(heights, height);
       int next_face = 3 - high - low;
+      
+      std::cout << "Asdfsaf" << std::endl;
 	   
       // --- Interpolate Contour Point ---
       // Weight is determined from the elevation(z-axis).
       // w = ( dist to new elevation ) / ( distance between p1 and p2 )
       // w = (height - p1.z) / (p2.z - p1.z)
-      double w = (height - fh->vertex(low)->point().z()) /
-	(fh->vertex(high)->point().z() - fh->vertex(low)->point().z());
+      double w;
+      if(fh->vertex(high)->point().z() == fh->vertex(low)->point().z()) {
+	w = 0.5;
+      }
+      else {
+	w = (height - fh->vertex(low)->point().z()) /
+	  (fh->vertex(high)->point().z() - fh->vertex(low)->point().z());
+      }
       // Find x and y from weighted average along each axis
       // x = p1.x*(1 - w) + p2.x*(w)
       double x = fh->vertex(low)->point().x() * (1 - w) +
@@ -153,7 +159,6 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
     
     i--;
   }
-
 
   return contours;
 }
@@ -201,7 +206,7 @@ int main()
   gv << D;
 
   // Enter contour elevation query
-  std::cout << "Enter elevation: ";
+  //std::cout << "Enter elevation: ";
   //double test_height;
   //std::cin >> test_height;
   std::vector<Polygon> contours = generate_contour_line(170.0, D);
