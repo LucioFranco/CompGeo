@@ -62,24 +62,41 @@ std::vector<Point3> load_from_file(const char* file)
 }
 
 // get containg edge (high, low)
-std::pair<int,int> containing_edge(std::vector<double> heights, int height, Polygon poly)
+std::pair<int,int> containing_edge(std::vector<double> vertices, int height, Polygon poly)
 {
   int high = 0, low = 0;
-  int max =  1000;
-  std::cout << "max: " << max << std::endl;
-  for(int i = 0; i < heights.size(); i++) {
-    if (heights[i] > height && heights[i] < max)
-      high = i;
-  }
-  int min =  -1;
-  for(int i = 0; i < heights.size(); i++) {
-    if (i != max && heights[i] < height && heights[i] > min)
-      low = i;
-  }
 
-  for (VertexIterator vi = poly.vertices_begin(); vi != poly.vertices_end(); ++vi) {
-    if ((*vi).x()) {
-      //do something
+  if(vertices.size() == 2) {
+    if(vertices[0] > vertices[1]) {
+      high = 0;
+      low  = 1;
+    }
+    else {
+      high = 1;
+      low = 0;
+    }
+  }
+  else {
+    for(int i = 0; i < vertices.size(); i++) {
+      if (vertices[i] > height) {
+	high = i;
+      }
+    }
+    for(int i = 0; i < vertices.size(); i++) {
+      if (vertices[i] > height && vertices[i] < vertices[high]) {
+	high = i;
+      }
+    }
+  
+    for(int i = 0; i < vertices.size(); i++) {
+      if (vertices[i] < height) {
+	low = i;
+      }
+    }
+    for(int i = 0; i < vertices.size(); i++) {
+      if (vertices[i] < height && vertices[i] >= vertices[low]) {
+	low = i;
+      }
     }
   }
 
@@ -102,8 +119,8 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
   // Find all faces at height
   std::list<Interval> level;
   isl.find_intervals(height, std::back_inserter(level));
-  std::cout << "Asdfsf";
-  int i = 30;
+  
+  int i = 1;
   while(!level.empty() && i > 0) {
     Interval &interval = level.front();
     level.pop_front();
@@ -111,62 +128,67 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
     Polygon poly;
     Face_handle fh = interval.face_handle();
 
-    //level.remove(interval);
     // Loop for the entire contour, stop if not in the level list
     // std::find
 
-    int test_iterator = 1;
+    Point3 *high;
+    Point3 *low;
+
+    int test_iterator = 4;
     while(test_iterator > 0) {
-      std::cout << "0: " << fh->vertex(0)->point() << ", infinite" << D.infinite_face()->vertex(0)->point() << std::endl;
+      
       if (fh->vertex(0) == D.infinite_face()->vertex(0)) {
         test_iterator--;
       } else {
-      std::vector<double> heights;
-      heights.push_back(fh->vertex(0)->point().z());
-      heights.push_back(fh->vertex(1)->point().z());
-      heights.push_back(fh->vertex(2)->point().z());
 
-      for(double h : heights) std::cout << h << ", " << std::endl;
+	std::vector<double> heights;
+      
+	heights.push_back(fh->vertex(0)->point().z());
+	heights.push_back(fh->vertex(1)->point().z());
+	heights.push_back(fh->vertex(2)->point().z());
 
-      std::pair<int,int> edge  = containing_edge(heights, height, poly);
-      int high = edge.first;
-      int low = edge.second;
-      int next_face = 3 - high - low;
+	std::pair<int,int> edge = containing_edge(heights, height, poly);
+	if(high && high == &fh->vertex(edge.first)->point() &&
+	   low == &fh->vertex(edge.second)->point()) {
+	  std::cout << "change" << std::endl;
+	  heights.erase(heights.begin() + edge.first);
+	  edge = containing_edge(heights, height, poly);
+	  }
+	high = &fh->vertex(edge.first)->point();
+	low = &fh->vertex(edge.second)->point();
 
-      std::cout << "\nhello, world " << low << ", " << high << std::endl;
-      auto low_z = fh->vertex(low)->point().z();
-      std::cout << "\nasdfs" << low_z << std::endl;
-      auto high_z = fh->vertex(high)->point().z();
+	int next_face = 3 - edge.first - edge.second;
 
-      // --- Interpolate Contour Point ---
-      // Weight is determined from the elevation(z-axis).
-      // w = ( dist to new elevation ) / ( distance between p1 and p2 )
-      // w = (height - p1.z) / (p2.z - p1.z)
+	// --- Interpolate Contour Point ---
+	// Weight is determined from the elevation(z-axis).
+	// w = ( dist to new elevation ) / ( distance between p1 and p2 )
+	// w = (height - p1.z) / (p2.z - p1.z)
 
-      double w = (height - low_z) / (high_z - low_z);
+	double w = (height - low->z()) / (high->z() - low->z());
 
-      // Find x and y from weighted average along each axis
-      // x = p1.x*(1 - w) + p2.x*(w)
-      double x = fh->vertex(low)->point().x() * (1 - w) +
-	fh->vertex(high)->point().x() * w;
-      // y = p1.y*(1 - w) + p2.y*(w)
-      double y = fh->vertex(low)->point().y() * (1 - w) +
-	fh->vertex(high)->point().y() * w;
+	// Find x and y from weighted average along each axis
+	// x = p1.x*(1 - w) + p2.x*(w)
+	double x = low->x() * (1 - w) +
+	  high->x() * w;
+	// y = p1.y*(1 - w) + p2.y*(w)
+	double y = low->y() * (1 - w) +
+	  high->y() * w;
 
-      std::cout << "line: " << x << ", " << y << std::endl;
-      poly.push_back(Point2(x,y));
-      // --- End interpolate ---
+	poly.push_back(Point2(x,y));
+	// --- End interpolate ---
 
-      // Test output
-      std::cout << "0: " << fh->vertex(0)->point() << std::endl;
-      std::cout << "1: " << fh->vertex(1)->point() << std::endl;
-      std::cout << "2: " << fh->vertex(2)->point() << std::endl;
+	// Test output
+      
+	std::cout << "\n0: " << fh->vertex(0)->point() << std::endl;
+	std::cout << "1: " << fh->vertex(1)->point() << std::endl;
+	std::cout << "2: " << fh->vertex(2)->point() << std::endl;
 
-      std::cout << "High: " << high << ", low: " << low << std::endl;
-      std::cout << "Next Face: " << next_face << std::endl;
+	std::cout << "High: " << *high << ", low: " << *low << std::endl;
+	std::cout << "Next Face: " << next_face << std::endl;
+      
 
-      fh = fh->neighbor(next_face);
-      test_iterator--;
+	fh = fh->neighbor(next_face);
+	test_iterator--;
       }
     }
 
@@ -193,7 +215,7 @@ CGAL::Geomview_stream setup_geomview()
 void draw_polygon(CGAL::Geomview_stream& gv, Polygon p)
 {
   gv << CGAL::RED;
-  std::cout << "Drawing polygon: \n" << std::endl;
+  
   gv.set_wired(true);
 
   // Iterate through the edges and display them
@@ -223,12 +245,10 @@ int main()
   gv << D;
 
   // Enter contour elevation query
-  //std::cout << "Enter elevation: ";
-  //double test_height;
-  //std::cin >> test_height;
-  std::vector<Polygon> contours = generate_contour_line(170.0, D);
+  double elevation = 170.0;
+  std::vector<Polygon> contours = generate_contour_line(elevation, D);
 
-  for(Polygon  polygon : contours) {
+  for(Polygon polygon : contours) {
     draw_polygon(gv, polygon);
   }
 
