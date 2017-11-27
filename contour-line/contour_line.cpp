@@ -62,7 +62,7 @@ std::vector<Point3> load_from_file(const char* file)
 }
 
 // get containg edge (high, low)
-std::pair<int,int> containing_edge(std::vector<double> vertices, int height, Polygon poly)
+std::pair<int,int> containing_edge(std::vector<double> vertices, int height)
 {
   int high = 0, low = 0;
 
@@ -70,32 +70,29 @@ std::pair<int,int> containing_edge(std::vector<double> vertices, int height, Pol
     if(vertices[0] > vertices[1]) {
       high = 0;
       low  = 1;
-    }
-    else {
+    } else {
       high = 1;
       low = 0;
     }
-  }
-  else {
+  } else {
     for(int i = 0; i < vertices.size(); i++) {
       if (vertices[i] > height) {
-	high = i;
+        high = i;
       }
     }
     for(int i = 0; i < vertices.size(); i++) {
       if (vertices[i] > height && vertices[i] < vertices[high]) {
-	high = i;
+        high = i;
       }
     }
-  
     for(int i = 0; i < vertices.size(); i++) {
       if (vertices[i] < height) {
-	low = i;
+        low = i;
       }
     }
     for(int i = 0; i < vertices.size(); i++) {
       if (vertices[i] < height && vertices[i] >= vertices[low]) {
-	low = i;
+        low = i;
       }
     }
   }
@@ -110,16 +107,19 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
 
   // Build interval skip list
   Interval_skip_list isl;
+  std::vector<Interval> intervals;
   for(Finite_faces_iterator fh = D.finite_faces_begin();
       fh != D.finite_faces_end();
       ++fh) {
-    isl.insert(Interval(fh));
+    Interval inter = Interval(fh);
+    intervals.push_back(inter);
+    isl.insert(inter);
   }
 
   // Find all faces at height
   std::list<Interval> level;
   isl.find_intervals(height, std::back_inserter(level));
-  
+
   int i = 1;
   while(!level.empty() && i > 0) {
     Interval &interval = level.front();
@@ -134,61 +134,63 @@ std::vector<Polygon> generate_contour_line(float height, Delaunay D)
     Point3 *high;
     Point3 *low;
 
-    int test_iterator = 4;
+    int test_iterator = 100;
     while(test_iterator > 0) {
-      
-      if (fh->vertex(0) == D.infinite_face()->vertex(0)) {
+      if (&fh == NULL || fh->vertex(0) == D.infinite_face()->vertex(0)) {
         test_iterator--;
       } else {
 
-	std::vector<double> heights;
-      
-	heights.push_back(fh->vertex(0)->point().z());
-	heights.push_back(fh->vertex(1)->point().z());
-	heights.push_back(fh->vertex(2)->point().z());
+        std::vector<double> heights;
 
-	std::pair<int,int> edge = containing_edge(heights, height, poly);
-	if(high && high == &fh->vertex(edge.first)->point() &&
-	   low == &fh->vertex(edge.second)->point()) {
-	  std::cout << "change" << std::endl;
-	  heights.erase(heights.begin() + edge.first);
-	  edge = containing_edge(heights, height, poly);
-	  }
-	high = &fh->vertex(edge.first)->point();
-	low = &fh->vertex(edge.second)->point();
+        heights.push_back(fh->vertex(0)->point().z());
+        heights.push_back(fh->vertex(1)->point().z());
+        heights.push_back(fh->vertex(2)->point().z());
 
-	int next_face = 3 - edge.first - edge.second;
+        std::pair<int,int> edge = containing_edge(heights, height);
+        if(high && high == &fh->vertex(edge.first)->point() &&
+           low == &fh->vertex(edge.second)->point()) {
+          std::cout << "change" << std::endl;
+          heights.erase(heights.begin() + edge.first);
+          edge = containing_edge(heights, height);
+        }
+        high = &fh->vertex(edge.first)->point();
+        low = &fh->vertex(edge.second)->point();
 
-	// --- Interpolate Contour Point ---
-	// Weight is determined from the elevation(z-axis).
-	// w = ( dist to new elevation ) / ( distance between p1 and p2 )
-	// w = (height - p1.z) / (p2.z - p1.z)
 
-	double w = (height - low->z()) / (high->z() - low->z());
+        //isl.remove(Interval(fh));
 
-	// Find x and y from weighted average along each axis
-	// x = p1.x*(1 - w) + p2.x*(w)
-	double x = low->x() * (1 - w) +
-	  high->x() * w;
-	// y = p1.y*(1 - w) + p2.y*(w)
-	double y = low->y() * (1 - w) +
-	  high->y() * w;
+        int next_face = 3 - edge.first - edge.second;
 
-	poly.push_back(Point2(x,y));
-	// --- End interpolate ---
+        // --- Interpolate Contour Point ---
+        // Weight is determined from the elevation(z-axis).
+        // w = ( dist to new elevation ) / ( distance between p1 and p2 )
+        // w = (height - p1.z) / (p2.z - p1.z)
 
-	// Test output
-      
-	std::cout << "\n0: " << fh->vertex(0)->point() << std::endl;
-	std::cout << "1: " << fh->vertex(1)->point() << std::endl;
-	std::cout << "2: " << fh->vertex(2)->point() << std::endl;
+        double w = (height - low->z()) / (high->z() - low->z());
 
-	std::cout << "High: " << *high << ", low: " << *low << std::endl;
-	std::cout << "Next Face: " << next_face << std::endl;
-      
+        // Find x and y from weighted average along each axis
+        // x = p1.x*(1 - w) + p2.x*(w)
+        double x = low->x() * (1 - w) +
+          high->x() * w;
+        // y = p1.y*(1 - w) + p2.y*(w)
+        double y = low->y() * (1 - w) +
+          high->y() * w;
 
-	fh = fh->neighbor(next_face);
-	test_iterator--;
+        poly.push_back(Point2(x,y));
+        // --- End interpolate ---
+
+        // Test output
+
+        std::cout << "\n0: " << fh->vertex(0)->point() << std::endl;
+        std::cout << "1: " << fh->vertex(1)->point() << std::endl;
+        std::cout << "2: " << fh->vertex(2)->point() << std::endl;
+
+        std::cout << "High: " << *high << ", low: " << *low << std::endl;
+        std::cout << "Next Face: " << next_face << std::endl;
+
+
+        fh = fh->neighbor(next_face);
+        test_iterator--;
       }
     }
 
